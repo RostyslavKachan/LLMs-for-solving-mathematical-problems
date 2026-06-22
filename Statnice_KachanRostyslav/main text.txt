@@ -1,0 +1,60 @@
+Slajd 1 (10–15 sekund)
+  
+  Dobrý den, vážená komise, jmenuji se Rostyslav Kachan a dnes vám představím svou bakalářskou práci na téma Velké jazykové modely pro řešení matematických úloh.
+
+  ---
+  Slajd 2 — Cíle práce (30–40 sekund)
+  Na začátku chtěl bych vysvětlit co bylo cílem této bakalářsky.
+  Cílem práce bylo zlepšit schopnost velkých jazykových modelů řešit matematické úlohy a zároveň provést ablační studie jednotlivých  hyperparametru. Nejprve jsem vybral tři modely reprezentující různé typy předtrénování a datovou sadu GSM8K, na které
+  probíhaly všechny experimenty. Poté proběhl samotný LoRA fine-tuning, následovaný vyhodnocením pomocí dvou metrik — přesnosti, která měří podíl správných odpovědí ze všech testovacích příkladů, a PRM hodnocení,
+  které posuzuje kvalitu jednotlivých kroků řešení. V další části krátce představím model, dataset a nakonec ukážu výsledky.
+
+  ---
+  Slajd 3 — Modely (35–45 sekund)
+  
+  Pro experimenty jsem zvolil tři modely, které reprezentují různé přístupy k předtrénování. Llama-2-7b je čistě base model bez jakéhokoliv instrukčního doladění. Llama-2-7b-chat-hf prošel supervised
+  fine-tuningem a RLHF, takže je přizpůsobený dialogovému režimu. Mistral-7B-Instruct-v0.1 je instrukční model trénovaný pouze pomocí SFT. Pro hodnocení kvality
+  uvažování jsem dále použil model Qwen2.5-Math-PRM-7B jako process reward model.
+
+  ---
+  Slajd 4 — Dataset (25–35 sekund)
+  
+  Jako trénovací a testovací data jsem použil datovou sadu GSM8K — 7 473 příkladů pro trénování a 1 319 pro testování. Každý příklad obsahuje slovní matematickou úlohu a řešení ve formátu chain-of-thought, kde
+  jsou jednotlivé kroky výpočtu explicitně zapsány a finální odpověď je označena oddělovačem ####. Tento formát je klíčový pro PRM hodnocení, protože umožňuje ohodnotit každý krok zvlášť. Na slajdu můžete vidět jeden příklad ukazující formát datasetu
+
+  ---
+  Slajd 5 — Výsledky: Accuracy (45–55 sekund)
+
+  Fine-tuning přinesl výrazné zlepšení u všech tří modelů. Největší absolutní zlepšení dosáhl Llama-2-7b-hf — z 10,77 % na 33,36 %, protože jako base model startoval z nejnižší pozice a měl největší prostor pro
+  zlepšení. Zajímavým zjištěním je, že každý model vyžadoval odlišnou optimální konfiguraci hyperparametrů. Mistral potřeboval výrazně nižší learning rate než oba modely Llama, což ukazuje, že instrukční modely
+  jsou citlivější na velké aktualizace vah. Tato tabulka níže ukazuje nejlepší nalezené konfigurace pro každý model.
+
+  ---
+  Slajd 6 — Výsledky: PRM hodnocení (45–55 sekund)
+
+  PRM hodnocení ukázalo, že fine-tuning zlepšil nejen přesnost výsledků, ale i kvalitu
+  samotného uvažování. U Llama-2-7b-hf vzrostlo "avg_prod je průměrná hodnota součinů PRM skóre kroků přes všechny příklady" z 0,104 na 0,269,
+  přičemž počet kroků vzrostl z 1 417 na 6 392 — model se naučil generovat strukturované
+  řešení krok za krokem. Metrika avg_incorrect ukazuje průměrné PRM skóre kroků
+  u špatných odpovědí — čím nižší, tím lépe model rozlišuje správné a chybné postupy.
+  U všech tří modelů tato hodnota po fine-tuningu klesla, což znamená, že chybné odpovědi
+  jsou nyní lépe identifikovatelné.
+
+  ---
+  Slajd 7 — Závěr (20–25 sekund)
+  
+  Práce ukázala, že LoRA fine-tuning je efektivní přístup ke zlepšení matematického uvažování a že typ předtrénování silně ovlivňuje optimální konfiguraci hyperparametrů. PRM hodnocení navíc potvrdilo, že
+  zlepšení nejde jen o správnou finální odpověď, ale i o kvalitu celého postupu řešení. Děkuji za pozornost.
+
+ Otázka 1 — QLoRA
+  Cílem práce nebylo vyzkoušet všechny možné metody fine-tuningu, ale zaměřit se na LoRA a provést strukturovanou ablační studie na třech různých typech modelů.  Srovnání LoRA a QLoRA zůstává
+  perspektivním směrem pro budoucí výzkum.
+
+  ---
+  Otázka 2 — Bayesian search
+  Cílem bylo porozumění, ne jen nalezení optima. Nejprve jsem v prvním experimentu nalezl referenční konfiguraci a poté systematicky izoloval vliv každého
+  hyperparametru zvlášť.
+
+  ---
+  Otázka 3 — Chain-of-thought examples
+  Pro všechna vyhodnocení base modelu byly připojeny 3 příklady. Chat a instruct modely používají místo few-shot příkladů systémový prompt.
